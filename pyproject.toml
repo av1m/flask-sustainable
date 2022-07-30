@@ -1,0 +1,51 @@
+[build-system]
+requires = ["flit_core >=3.7.1,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "flask-sustainable"
+description = "Brings sustainability to Flask via HTTP headers"
+authors = [{name = "Avi Mimoun", email = "_@avim.eu"}]
+readme = "README.md"
+license = {file = "LICENSE"}
+classifiers = ["License :: OSI Approved :: MIT License"]
+requires-python = ">=3.10"
+dynamic = ["version"]
+dependencies = [
+    "flask >= 2.0.0",
+    # Compression
+    "brotli >= 1.0.0",
+    "zstandard >= 0.18.0"
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest >= 2.7.3",
+    "coverage >= 6.4.2",
+    "black >= 22.6.0",
+    "isort >= 5.10.1",
+    "docformatter >= 1.4"
+]
+
+[project.urls]
+Home = "https://github.com/av1m/flask-sustainable.git"
+Source = "https://github.com/av1m/flask-sustainable.git"
+
+[tool.flit.module]
+name = "flask_sustainable"
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests",
+]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
+skip_covered = true
+skip_empty = true
