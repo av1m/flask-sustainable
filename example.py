@@ -10,7 +10,13 @@ import flask
 from flask_sustainable import Sustainable
 
 
-def create_app():
+def create_app() -> flask.Flask:
+    """Create and configure an instance of the Flask application.
+
+    This is a simple Flask application that uses the Flask-Sustainable package.
+
+    :return: Flask application instance
+    """
     app = flask.Flask(__name__)
     Sustainable(app)
 
@@ -22,5 +28,4 @@ def create_app():
 
 
 if __name__ == "__main__":
-    app = create_app()
-    app.run(debug=True)
+    create_app().run(debug=True)

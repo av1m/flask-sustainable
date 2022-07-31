@@ -1,10 +1,11 @@
-"""Class test for compress.py module"""
+"""Class test for compress.py module."""
 
 # pylint: disable=missing-class-docstring
 # pylint: disable=missing-function-docstring
 
 import gzip
 import lzma
+import sys
 import unittest
 import zlib
 
@@ -72,13 +73,14 @@ class CompressTestCase(unittest.TestCase):
             self.assertEqual(response.data, b"Welcome!")
 
     def test_all(self):
+        algorithm = Compression.SUPPORTED_ALGORITHMS[0]
         with self.app.test_client() as client:
             response = client.get("/", headers={"Accept-Encoding": "*"})
             # By default, will use gzip
-            self.assertEqual(response.headers["Content-Encoding"], "gzip")
-            self.assertEqual(response.content_encoding, "gzip")
+            self.assertEqual(response.headers["Content-Encoding"], algorithm)
+            self.assertEqual(response.content_encoding, algorithm)
             # Decompress gzip
-            welcome = gzip.decompress(response.data)
+            welcome = sys.modules[algorithm].decompress(response.data)
             self.assertEqual(welcome, b"Welcome!")
 
 
@@ -128,3 +130,16 @@ class ResponseTestCase(unittest.TestCase):
                     response = Compression(self.response).make_response(name)
                     data = func(response.data)
                     self.assertEqual(data, b"Welcome!")
+
+
+class AcceptEncodingTestCase(unittest.TestCase):
+    def setUp(self) -> None:
+        self.app = Flask(__name__)
+
+        @self.app.route("/")
+        def _():
+            return "Welcome!"
+
+    def test_parse(self):
+        with self.app.test_client() as client:
+            client.get("/", headers={"Accept-Encoding": "gzip, deflate"})

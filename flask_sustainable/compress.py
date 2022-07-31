@@ -9,11 +9,13 @@ import zlib
 import brotli
 import flask
 import zstandard
+from werkzeug.datastructures import Accept
+from werkzeug.http import parse_accept_header
 
 logger = logging.getLogger(__name__)
 
 
-class Compression(object):
+class Compression:
     """Compress the response data when it's possible.
 
     This class is a wrapper around the flask.Response object.
@@ -21,28 +23,33 @@ class Compression(object):
     The response passed through this class is not modified.
 
     To do this, it checks the Accept-Encoding header of the request.
-    If the client accepts gzip, it compresses the response with gzip.
-    If the client accepts br, it compresses the response with br.
+    The best compression algorithm is chosen based on the Accept-Encoding header.
     etc.
 
     Example:
-    >>> # Client side
-    >>> request.headers["Accept-Encoding"] = "gzip,br,deflate"
-    >>> # Server side
     >>> response = flask.Response("Welcome!")
-    >>> response = Compression(response).compress()
+    >>> response = Compression(response, "deflate, gzip;q=1.0, *;q=0.5").compress()
     >>> response.headers["Content-Encoding"]
     'gzip'
     """
 
     SUPPORTED_ALGORITHMS: tuple = ("lzma", "zstd", "br", "gzip", "deflate")
 
-    def __init__(self, response: flask.Response) -> None:
-        self.accept_encoding = [
-            x.lower().strip()
-            for x in flask.request.headers.get("Accept-Encoding", "").split(",")
-        ]
-        logger.debug(self.accept_encoding)
+    def __init__(self, response: flask.Response, accept_encodings: str = None) -> None:
+        """Initialize the Compression object.
+
+        If the accept_encodings is not given, it will be taken from the request
+        If it's given, we'll use werkzeug.http.parse_accept_header to parse it
+
+        :param response: The response object
+        :type response: flask.Response
+        :param accept_encodings: The Accept-Encoding header of the request (optional)
+        :type accept_encodings: str
+        """
+        self.accept_encodings: Accept = (
+            parse_accept_header(accept_encodings) or flask.request.accept_encodings
+        )
+        logger.debug("Accept-Encoding: %s", self.accept_encodings)
         self.response = copy.deepcopy(response)
 
     @staticmethod
@@ -106,13 +113,11 @@ class Compression(object):
         """Compress the response data with the highest compression level
         available.
 
-        The order is as follows:
-        lzma, zstd, br, gzip, deflate
+        The best compression algorithm is chosen based on the Accept-Encoding header.
 
         Example:
-        >>> request.headers["Accept-Encoding"] = "gzip,br,deflate"
         >>> response = flask.Response("Welcome!")
-        >>> response = Compression(response).compress()
+        >>> response = Compression(response, "deflate, gzip;q=1.0, *;q=0.5").compress()
         >>> response.content_encoding
         'gzip'
 
@@ -124,12 +129,5 @@ class Compression(object):
         # https://github.com/closeio/Flask-gzip/issues/7
         self.response.direct_passthrough = False
         # Check if the client want any compression
-        if "*" in self.accept_encoding:  # Default encoding
-            return self.make_response("gzip")
-
-        # Choose the best compression method
-        algorithms = ["lzma", "zstd", "br", "gzip", "deflate"]
-        for algo in algorithms:
-            if algo in self.accept_encoding:
-                return self.make_response(algo, check=check)
-        return self.response
+        algo = self.accept_encodings.best_match(self.SUPPORTED_ALGORITHMS)
+        return self.make_response(algo, check=check) if algo else self.response
