@@ -1,5 +1,9 @@
 # coding: utf-8
 
+"""
+This module provides a way to compress a Flask Response.
+"""
+
 import copy
 import gzip
 import logging

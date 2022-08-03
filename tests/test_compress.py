@@ -13,7 +13,8 @@ import brotli
 import zstandard
 from flask import Flask, Response
 
-from flask_sustainable import Compression, Sustainable
+from flask_sustainable.compress import Compression
+from flask_sustainable.extension import Sustainable
 
 
 class CompressTestCase(unittest.TestCase):
