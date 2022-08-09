@@ -2,13 +2,13 @@
 
 """Base module
 
-This module represent the base class for all indicators and measures.
+This module represent the base class for all indicators and scores.
 The contract for each header is indicated in the classes below.
-It also explains what measures and extensions are.
+It also explains what indicators and scores are.
 
 It exist two classes that implement theses base class:
 - ``indicator`` : correspond to the :file:`indicator.py` module
-- ``measure`` : correspond to the :file:`measure.py` module
+- ``score`` : correspond to the :file:`score.py` module
 """
 
 from abc import ABCMeta, abstractmethod
@@ -17,10 +17,10 @@ import flask
 
 
 class BaseHeader(metaclass=ABCMeta):
-    """Base class for all indicators and measures.
+    """Base class for all indicators and scores.
 
     This class is an abstract class.
-    It must be inherited by all classes that are indicators or measures.
+    It must be inherited by all classes that are indicators or scores.
     """
 
     @property
@@ -88,9 +88,9 @@ class BaseHeader(metaclass=ABCMeta):
     def should_use(self) -> bool:
         """Check if the indicator should be used.
 
-        The indicator/measure should be used if the client ask for the header.
+        The indicator/score should be used if the client ask for the header.
 
-        :return: True if the indicator/measure should be used, False otherwise
+        :return: True if the indicator/score should be used, False otherwise
         :rtype: bool
         """
         return (
@@ -125,20 +125,20 @@ class BaseIndicator(BaseHeader, metaclass=ABCMeta):
         app.before_request(self.before_request)
 
 
-class BaseMeasure(BaseHeader, metaclass=ABCMeta):
-    """Base class for all measures.
+class BaseSore(BaseHeader, metaclass=ABCMeta):
+    """Base class for all scores.
 
-    A measure is executed after the indicator.
+    A score is executed after all indicators.
 
-    The name of the measure must follow `Perf-ScoreX` where ``X`` is a int > 0.
+    The name of the score must follow `Perf-ScoreX` where ``X`` is a int > 0.
 
-    The result of a measure is called a score.
-    A measure don't have a :func:`before_request` because his execution comes
+    The result of a score is called a score.
+    A score don't have a :func:`before_request` because his execution comes
     at last.
 
     Indeed, because all indicators are already used, we can call them to get the score.
-    It is possible that a score is not requested by the user, it will not be available
-    at the measurement level.
+    It's possible that a score is not requested by the user, it will not be available
+    at the score level.
 
     It's the responsibility of the implementation to verify whether the indicator
     is present in the headers. If an indicator is required and is not present,
@@ -146,7 +146,7 @@ class BaseMeasure(BaseHeader, metaclass=ABCMeta):
 
     Example::
 
-        class Example(BaseMeasure):
+        class Example(BaseSore):
             name: str = "Perf-Score1"
 
             def after_request(self, response):

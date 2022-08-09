@@ -4,7 +4,7 @@
 This module allow to connect a flask application with this package.
 
 We can register this extension to a flask application
-and add new indicators and measures to the response.
+and add new indicators and scores to the response.
 Also, it add a compression to the response.
 """
 
@@ -12,7 +12,7 @@ import logging
 
 import flask
 
-from flask_sustainable.base import BaseIndicator, BaseMeasure
+from flask_sustainable.base import BaseIndicator, BaseSore
 from flask_sustainable.compress import Compression
 
 logger = logging.getLogger(__name__)
@@ -23,13 +23,13 @@ class Sustainable:
 
     This extension add the following features:
     - compress response
-    - add new headers about indicators and measures to the response
+    - add new headers about indicators and scores to the response
     """
 
     def __init__(self, app: flask.Flask = None, **kwargs) -> None:
         self._options = kwargs
         self._registered_indicators: list[BaseIndicator] = []
-        self._registered_measures: list[BaseMeasure] = []
+        self._registered_scores: list[BaseSore] = []
         if app is not None:
             self.init_app(app, **kwargs)
 
@@ -74,10 +74,10 @@ class Sustainable:
         This method call each :meth:`BaseHeader.before_request` method
         that are registered in the application.
         To register a new :class:`BaseHeader`,
-        use the :meth:`add_indicator` or :meth:`add_measure` method.
+        use the :meth:`add_indicator` or :meth:`add_score` method.
 
         Internally, this functions use the
-        :attr:`_registered_indicators` and :attr:`_registered_measures` attribute
+        :attr:`_registered_indicators` and :attr:`_registered_scores` attribute
         """
         # Compress the response
         try:
@@ -92,7 +92,7 @@ class Sustainable:
                 {"Access-Control-Allow-Headers": ", ".join(headers)}
             )
         # Run after_request on all registered headers
-        for header in [*self._registered_indicators, *self._registered_measures]:
+        for header in [*self._registered_indicators, *self._registered_scores]:
             if header.should_use():
                 header.after_request(response=response)
         return response
@@ -116,26 +116,24 @@ class Sustainable:
         ), "Indicator name must start with 'Perf-'"
         self._registered_indicators.append(indicator)
 
-    def add_measure(self, measure: BaseMeasure) -> None:
-        """Add a measure to the response.
+    def add_score(self, score: BaseSore) -> None:
+        """Add a score to the response.
 
         The rules for the name are available
-        in the :func:`indicator.BaseMeasure.name`.
+        in the :func:`indicator.BaseSore.name`.
 
-        :param header: Measure to add, must be a subclass of BaseMeasure
-        :type header: BaseMeasure
-        :raises AssertionError: If measure is not a subclass of BaseMeasure
+        :param header: Score to add, must be a subclass of BaseSore
+        :type header: BaseSore
+        :raises AssertionError: If score is not a subclass of BaseSore
         :return: None
         """
-        assert isinstance(
-            measure, BaseMeasure
-        ), "Measure must be a subclass of BaseMeasure"
+        assert isinstance(score, BaseSore), "Score must be a subclass of BaseSore"
         # Check if the name is valid
         try:
-            assert measure.name.lower().split("perf-score")[1].isnumeric()
+            assert score.name.lower().split("perf-score")[1].isnumeric()
         except ValueError as error:
             raise ValueError(
-                "Measure name must start with 'Perf-score' and end with a number, "
-                "check base.BaseMeasure"
+                "Score name must start with 'Perf-score' and end with a number, "
+                "check base.BaseSore"
             ) from error
-        self._registered_measures.append(measure)
+        self._registered_scores.append(score)
