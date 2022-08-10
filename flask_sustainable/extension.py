@@ -116,6 +116,19 @@ class Sustainable:
         ), "Indicator name must start with 'Perf-'"
         self._registered_indicators.append(indicator)
 
+    def add_indicators(self, *indicators: BaseIndicator) -> None:
+        """Add multiple indicators to the response.
+
+        This method is the same as :meth:`add_indicator` but for multiple indicators.
+
+        :param indicators: Indicators to add, must be a subclass of BaseIndicator
+        :type indicators: BaseIndicator
+        :raises AssertionError: If indicator is not a subclass of BaseIndicator
+        :return: None
+        """
+        for indicator in indicators:
+            self.add_indicator(indicator)
+
     def add_score(self, score: BaseSore) -> None:
         """Add a score to the response.
 
@@ -137,3 +150,16 @@ class Sustainable:
                 "check base.BaseSore"
             ) from error
         self._registered_scores.append(score)
+
+    def add_scores(self, *scores: BaseSore) -> None:
+        """Add multiple scores to the response.
+
+        This method is the same as :meth:`add_score` but for multiple scores.
+
+        :param scores: Scores to add, must be a subclass of BaseSore
+        :type scores: BaseSore
+        :raises AssertionError: If score is not a subclass of BaseSore
+        :return: None
+        """
+        for score in scores:
+            self.add_score(score)

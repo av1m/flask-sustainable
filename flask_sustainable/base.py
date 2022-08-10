@@ -142,7 +142,8 @@ class BaseSore(BaseHeader, metaclass=ABCMeta):
 
     It's the responsibility of the implementation to verify whether the indicator
     is present in the headers. If an indicator is required and is not present,
-    the function must return none and not lift an execution.
+    the function after_request must return none and not raise an exception.
+    It would not be appropriate to add a header if the calculation is not possible.
 
     Example::
 
