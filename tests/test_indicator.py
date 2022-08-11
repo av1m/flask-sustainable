@@ -27,7 +27,8 @@ class PerfTimeTestCase(unittest.TestCase):
             self.assertIsNone(response.headers.get("Perf-Time"))
             response = client.get("/", headers={"perf": "perf-time"})
             perf_time = float(response.headers.get("Perf-Time"))
-            self.assertGreater(perf_time, 0.03)
+            self.assertTrue(perf_time > 0)
+            self.assertTrue(isinstance(perf_time, float))
             response = client.get("/", headers={"Perf": "PERF-TIME"})
             self.assertIn("PERF-TIME", response.headers)
 
@@ -48,7 +49,8 @@ class PerfCPUTestCase(unittest.TestCase):
             self.assertIsNone(response.headers.get("Perf-CPU"))
             response = client.get("/", headers={"perf": "perf-cpu"})
             perf_cpu = float(response.headers.get("Perf-CPU"))
-            self.assertGreater(perf_cpu, 0.04)
+            self.assertTrue(perf_cpu > 0)
+            self.assertTrue(isinstance(perf_cpu, float))
             response = client.get("/", headers={"Perf": "PERF-CPU"})
             self.assertIn("PERF-CPU", response.headers)
 
@@ -69,7 +71,8 @@ class PerfRAMTestCase(unittest.TestCase):
             self.assertIsNone(response.headers.get("Perf-RAM"))
             response = client.get("/", headers={"perf": "perf-ram"})
             perf_ram = float(response.headers.get("Perf-RAM"))
-            self.assertGreater(perf_ram, 0.01)
+            self.assertTrue(perf_ram > 0)
+            self.assertTrue(isinstance(perf_ram, float))
             response = client.get("/", headers={"Perf": "PERF-RAM"})
             self.assertIn("PERF-RAM", response.headers)
 
