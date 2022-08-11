@@ -1,7 +1,7 @@
 Flask-sustainable
 =================
 
-|Supported Python versions| |License|
+|Supported Python versions| |License| |Latest Version| |PyPI Publish| |Python CI|
 
 | Flask-Sustainable is an extension for Flask that provides a simple way to add sustainability to your application.
 | This is done by compressing the HTTP responses as soon as possible.  
@@ -118,3 +118,9 @@ This project is licensed under the `MIT License <./LICENSE>`_.
 .. |Supported Python versions| image:: https://img.shields.io/badge/Python-3.6|3.7|3.8|3.9|3.10-blue
 .. |License| image:: http://img.shields.io/:license-MIT-blue.svg
    :target: https://github.com/av1m/flask-sustainable/blob/main/LICENSE
+.. |PyPI Publish| image:: https://github.com/av1m/flask-sustainable/actions/workflows/pypi.yml/badge.svg
+   :target: https://github.com/av1m/flask-sustainable/actions/workflows/pypi.yml
+.. |Python CI| image:: https://github.com/av1m/flask-sustainable/actions/workflows/ci.yaml/badge.svg
+   :target: https://github.com/av1m/flask-sustainable/actions/workflows/ci.yaml
+.. |Latest Version| image:: https://img.shields.io/pypi/v/Flask-Sustainable.svg
+   :target: https://pypi.python.org/pypi/Flask-Sustainable/
