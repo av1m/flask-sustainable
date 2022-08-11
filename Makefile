@@ -22,3 +22,8 @@ format: ## Format code.
 	docformatter --in-place -r **/*.py
 	isort .
 	black .
+
+publish: ## Publish package to PyPI.
+	# Need to setup env variables...
+	# https://flit.pypa.io/en/latest/cmdline.html?highlight=publish#envvar-FLIT_USERNAME
+	flit publish --setup-py
