@@ -25,7 +25,7 @@ jobs:
 
       - name: Build wheel and source distributions
         env:
-          FLIT_USERNAME: av1m
+          FLIT_USERNAME: __token__
           FLIT_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
           FLIT_INDEX_URL: https://upload.pypi.org/legacy/
         run: |
