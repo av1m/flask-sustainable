@@ -2,13 +2,19 @@
     // See https://go.microsoft.com/fwlink/?LinkId=827846
     // for the documentation about the extensions.json format
     "recommendations": [
-        "editorconfig.editorconfig",
-        "esbenp.prettier-vscode",
-        "dbaeumer.vscode-eslint",
+        // Official Microsoft
         "ms-python.python",
         "ms-python.vscode-pylance",
         "ms-python.black-formatter",
         "ms-python.pylint",
         "ms-python.isort",
+        
+        // Docs
+        "njpwerner.autodocstring",
+        "lextudio.restructuredtext-pack",
+
+        "editorconfig.editorconfig",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
     ]
 }

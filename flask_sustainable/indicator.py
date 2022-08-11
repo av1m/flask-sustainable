@@ -1,11 +1,9 @@
 # coding: utf-8
 
-"""
-Indicator module.
+"""This module represents examples of indicator implementation.
 
-This module represents examples of indicator implementation.
-
-For more information about an indicator, see :class:`BaseIndicator` class.
+For more information about an indicator, see :class:`BaseIndicator`
+class.
 """
 
 import time
@@ -87,7 +85,6 @@ class PerfRAM(BaseIndicator):
         app = flask.Flask(__name__)
         sustainable = Sustainable(app)
         sustainable.add_indicator(PerfRAM())
-
     """
 
     name = "Perf-RAM"

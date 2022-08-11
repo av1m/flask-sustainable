@@ -1,6 +1,9 @@
 # coding: utf-8
 
 """
+Extension module
+=================
+
 This module allow to connect a flask application with this package.
 
 We can register this extension to a flask application
@@ -12,14 +15,14 @@ import logging
 
 import flask
 
-from flask_sustainable.base import BaseIndicator, BaseSore
+from flask_sustainable.base import BaseIndicator, BaseScore
 from flask_sustainable.compress import Compression
 
 logger = logging.getLogger(__name__)
 
 
 class Sustainable:
-    """Flask extension that provide sustainable to a flask application
+    """Flask extension that provide sustainable to a flask application.
 
     This extension add the following features:
     - compress response
@@ -29,7 +32,7 @@ class Sustainable:
     def __init__(self, app: flask.Flask = None, **kwargs) -> None:
         self._options = kwargs
         self._registered_indicators: list[BaseIndicator] = []
-        self._registered_scores: list[BaseSore] = []
+        self._registered_scores: list[BaseScore] = []
         if app is not None:
             self.init_app(app, **kwargs)
 
@@ -48,7 +51,8 @@ class Sustainable:
         app.after_request(self.after_request)
 
     def before_request(self) -> None:
-        """When this extension is enabled, this method is called before each request.
+        """When this extension is enabled, this method is called before each
+        request.
 
         This method don't add any header to the response,
         it only initialize some attributes that will be used
@@ -67,7 +71,8 @@ class Sustainable:
                 registered_header.before_request()
 
     def after_request(self, response: flask.Response) -> flask.Response:
-        """When this extension is enabled, this method is called after each request.
+        """When this extension is enabled, this method is called after each
+        request.
 
         This method is responsible for the compression and the addition of headers.
 
@@ -129,36 +134,36 @@ class Sustainable:
         for indicator in indicators:
             self.add_indicator(indicator)
 
-    def add_score(self, score: BaseSore) -> None:
+    def add_score(self, score: BaseScore) -> None:
         """Add a score to the response.
 
         The rules for the name are available
-        in the :func:`indicator.BaseSore.name`.
+        in the :func:`indicator.BaseScore.name`.
 
-        :param header: Score to add, must be a subclass of BaseSore
-        :type header: BaseSore
-        :raises AssertionError: If score is not a subclass of BaseSore
+        :param header: Score to add, must be a subclass of BaseScore
+        :type header: BaseScore
+        :raises AssertionError: If score is not a subclass of BaseScore
         :return: None
         """
-        assert isinstance(score, BaseSore), "Score must be a subclass of BaseSore"
+        assert isinstance(score, BaseScore), "Score must be a subclass of BaseScore"
         # Check if the name is valid
         try:
             assert score.name.lower().split("perf-score")[1].isnumeric()
         except ValueError as error:
             raise ValueError(
                 "Score name must start with 'Perf-score' and end with a number, "
-                "check base.BaseSore"
+                "check base.BaseScore"
             ) from error
         self._registered_scores.append(score)
 
-    def add_scores(self, *scores: BaseSore) -> None:
+    def add_scores(self, *scores: BaseScore) -> None:
         """Add multiple scores to the response.
 
         This method is the same as :meth:`add_score` but for multiple scores.
 
-        :param scores: Scores to add, must be a subclass of BaseSore
-        :type scores: BaseSore
-        :raises AssertionError: If score is not a subclass of BaseSore
+        :param scores: Scores to add, must be a subclass of BaseScore
+        :type scores: BaseScore
+        :raises AssertionError: If score is not a subclass of BaseScore
         :return: None
         """
         for score in scores:

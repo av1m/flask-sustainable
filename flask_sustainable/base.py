@@ -1,12 +1,15 @@
 # coding: utf-8
 
-"""Base module
+"""
+Base module
+===========
 
 This module represent the base class for all indicators and scores.
 The contract for each header is indicated in the classes below.
 It also explains what indicators and scores are.
 
 It exist two classes that implement theses base class:
+
 - ``indicator`` : correspond to the :file:`indicator.py` module
 - ``score`` : correspond to the :file:`score.py` module
 """
@@ -19,14 +22,14 @@ import flask
 class BaseHeader(metaclass=ABCMeta):
     """Base class for all indicators and scores.
 
-    This class is an abstract class.
-    It must be inherited by all classes that are indicators or scores.
+    This class is an abstract class. It must be inherited by all classes
+    that are indicators or scores.
     """
 
     @property
     @abstractmethod
     def name(self):
-        """Name of the header
+        """Name of the header.
 
         The name of the header that the client will ask through "Perf-".
         This name will also be in the response of the request
@@ -36,6 +39,7 @@ class BaseHeader(metaclass=ABCMeta):
         Finally, it must start with "Perf-"
 
         This header will be used in theses scenarios:
+
         - (server side) In a OPTIONS response to indicate the available headers
         - (client side) In a request through the "Perf" header to indicate
             the headers expected by the client.
@@ -52,7 +56,7 @@ class BaseHeader(metaclass=ABCMeta):
         """Method called after the request.
 
         This method will be called after each request.
-        It can use the flask.g object to get the data stored in the before_request.
+        It can use the :obj:`flask.g` object to get the data stored in the before_request.
         It can also use the response object to modify the response.
 
         This method is called in the same way as the after_request method of Flask.
@@ -73,11 +77,12 @@ class BaseHeader(metaclass=ABCMeta):
 
         By creating a Flask application, we can use the extension independently.
 
-        Example:
-        >>> app = flask.Flask(__name__)
-        # We assume that the indicator is a subclass of BaseHeader
-        >>> indicator = BaseHeader()
-        >>> indicator._init_app(app)
+        .. code-block:: python
+
+            app = flask.Flask(__name__)
+            # We assume that the indicator is a subclass of BaseHeader
+            indicator = BaseHeader()
+            indicator._init_app(app)
 
         :param app: The flask application
         :type app: flask.Flask
@@ -125,7 +130,7 @@ class BaseIndicator(BaseHeader, metaclass=ABCMeta):
         app.before_request(self.before_request)
 
 
-class BaseSore(BaseHeader, metaclass=ABCMeta):
+class BaseScore(BaseHeader, metaclass=ABCMeta):
     """Base class for all scores.
 
     A score is executed after all indicators.
@@ -147,7 +152,7 @@ class BaseSore(BaseHeader, metaclass=ABCMeta):
 
     Example::
 
-        class Example(BaseSore):
+        class Example(BaseScore):
             name: str = "Perf-Score1"
 
             def after_request(self, response):

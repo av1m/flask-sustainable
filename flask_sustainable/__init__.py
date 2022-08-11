@@ -1,6 +1,6 @@
 # coding: utf-8
 
-"""flask-sustainable module"""
+"""flask-sustainable module."""
 
 from .extension import Sustainable
 

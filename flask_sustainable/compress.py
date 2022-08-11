@@ -1,6 +1,9 @@
 # coding: utf-8
 
 """
+Compress module
+===============
+
 This module provides a way to compress a Flask Response.
 """
 
@@ -30,11 +33,12 @@ class Compression:
     The best compression algorithm is chosen based on the Accept-Encoding header.
     etc.
 
-    Example:
-    >>> response = flask.Response("Welcome!")
-    >>> response = Compression(response, "deflate, gzip;q=1.0, *;q=0.5").compress()
-    >>> response.headers["Content-Encoding"]
-    'gzip'
+    .. code-block:: python
+
+        response = flask.Response("Welcome!")
+        response = Compression(response, "deflate, gzip;q=1.0, *;q=0.5").compress()
+        response.headers["Content-Encoding"]
+        "gzip"
     """
 
     SUPPORTED_ALGORITHMS: tuple = ("lzma", "zstd", "br", "gzip", "deflate")
@@ -42,7 +46,7 @@ class Compression:
     def __init__(self, response: flask.Response, accept_encodings: str = None) -> None:
         """Initialize the Compression object.
 
-        If the accept_encodings is not given, it will be taken from the request
+        If the ``accept_encodings`` is not given, it will be taken from the request
         If it's given, we'll use werkzeug.http.parse_accept_header to parse it
 
         :param response: The response object
@@ -62,10 +66,11 @@ class Compression:
 
         This function raises an KeyError exception if the algorithm is not supported.
 
-        Example:
-        >>> data = b"Welcome!"
-        >>> Compression.compress_data("gzip", data)
-        b'\x1f\x8b\x08\x004\x0c\xe4b\x02\xff\x0bO\xcdI\xce\xcfMU\x04\x00\xd2\xb4B5\x08\x00\x00\x00'
+        .. code-block:: python
+
+            data = b"Welcome!"
+            Compression.compress_data("gzip", data)
+            b'\\x1f\\x8b\\x08\\x004\\x0c\\xe4b\\x02\\xff\\x0bO\\xcdI\\xce\\xcfMU\\x04\\x00\\xd2\\xb4B5\\x08\\x00\\x00\\x00'
 
         :param algorithm: The algorithm to use, must be one of the supported algorithms
         :type algorithm: str
@@ -89,19 +94,21 @@ class Compression:
 
         This function change the reponse data and adds the Content-Encoding header.
 
-        Example:
-        >>> response = flask.Response("Welcome!")
-        >>> response.data
-        b'Welcome!'
-        >>> response = Compression(response).make_response("gzip")
-        >>> response.data
-        b'\x1f\x8b\x08\x004\x0c\xe4b\x02\xff\x0bO\xcdI\xce\xcfMU\x04\x00\xd2\xb4B5\x08\x00\x00\x00'
-        >>> response.headers["Content-Encoding"]
-        'gzip'
+        Example::
+
+            response = flask.Response("Welcome!")
+            response.data
+            b'Welcome!'
+            response = Compression(response).make_response("gzip")
+            response.data
+            b'\\x1f\\x8b\\x08\\x004\\x0c\\xe4b\\x02\\xff\\x0bO\\xcdI\\xce\\xcfMU\\x04\\x00\\xd2\\xb4B5\\x08\\x00\\x00\\x00'
+            response.headers["Content-Encoding"]
+            'gzip'
 
         :param algorithm: The algorithm to use, must be one of the supported algorithms
         :type algorithm: str
-        :param check: If True, check if the compression is supported (KeyError if not)
+        :param check: If True, check if the compression is supported (KeyError if not),
+            defaults to True
         :type check: bool
         :return: The response object
         :rtype: flask.Response
@@ -119,11 +126,12 @@ class Compression:
 
         The best compression algorithm is chosen based on the Accept-Encoding header.
 
-        Example:
-        >>> response = flask.Response("Welcome!")
-        >>> response = Compression(response, "deflate, gzip;q=1.0, *;q=0.5").compress()
-        >>> response.content_encoding
-        'gzip'
+        Example::
+
+            response = flask.Response("Welcome!")
+            response = Compression(response, "deflate, gzip;q=1.0, *;q=0.5").compress()
+            response.content_encoding
+            'gzip'
 
         :param check: If True, check if the compression is supported
         :type check: bool

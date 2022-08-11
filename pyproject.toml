@@ -6,7 +6,7 @@ build-backend = "flit_core.buildapi"
 name = "flask-sustainable"
 description = "Brings sustainability to Flask via HTTP headers"
 authors = [{name = "Avi Mimoun", email = "_@avim.eu"}]
-readme = "README.md"
+readme = "README.rst"
 license = {file = "LICENSE"}
 classifiers = ["License :: OSI Approved :: MIT License"]
 requires-python = ">=3.6"
