@@ -51,7 +51,7 @@ html_context = {
         ProjectLink(
             "Issue Tracker", "https://github.com/av1m/flask-sustainable/issues/"
         ),
-        ProjectLink("Website", "https://avim.eu"),
+        ProjectLink("Documentation", "https://flask-sustainable.readthedocs.io/"),
         ProjectLink("Twitter", "https://twitter.com/avimimoun"),
     ]
 }
