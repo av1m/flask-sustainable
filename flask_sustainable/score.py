@@ -5,6 +5,8 @@
 For more information about what a score, see :class:`BaseScore` class.
 """
 
+import logging
+
 import flask
 
 from flask_sustainable.base import BaseScore
@@ -36,5 +38,5 @@ class PerfScoreCO2(BaseScore):
             if final_emissions := flask.g.tracker.final_emissions:
                 response.headers.update({self.name: f"{final_emissions:.16f}"})
         except AttributeError:
-            pass
+            logging.warning("No tracker found in flask.g")
         return response

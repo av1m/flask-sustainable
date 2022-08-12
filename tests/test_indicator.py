@@ -8,7 +8,13 @@ import unittest
 from flask import Flask
 
 from flask_sustainable import Sustainable
-from flask_sustainable.indicator import PerfCPU, PerfRAM, PerfTime
+from flask_sustainable.indicator import (
+    PerfCPU,
+    PerfEnergy,
+    PerfPower,
+    PerfRAM,
+    PerfTime,
+)
 
 
 class PerfTimeTestCase(unittest.TestCase):
@@ -84,6 +90,8 @@ class PerfAllTestCase(unittest.TestCase):
         sustainable.add_indicator(PerfCPU())
         sustainable.add_indicator(PerfRAM())
         sustainable.add_indicator(PerfTime())
+        sustainable.add_indicator(PerfEnergy())
+        sustainable.add_indicator(PerfPower())
 
         @self.app.route("/")
         def _():
@@ -95,7 +103,7 @@ class PerfAllTestCase(unittest.TestCase):
             self.assertIsNone(response.headers.get("Perf-CPU"))
             self.assertIsNone(response.headers.get("Perf-RAM"))
             self.assertIsNone(response.headers.get("Perf-Time"))
-            response = client.get("/", headers={"perf": "perf-time,perf-cpu,perf-ram"})
-            self.assertIn("Perf-CPU", response.headers)
-            self.assertIn("Perf-RAM", response.headers)
-            self.assertIn("Perf-Time", response.headers)
+            all_headers = "perf-time,perf-cpu,perf-ram,perf-energy,perf-power"
+            response = client.get("/", headers={"perf": all_headers})
+            for header in all_headers.split(","):
+                self.assertIn(header, response.headers, f"{header} not found")
