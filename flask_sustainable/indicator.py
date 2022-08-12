@@ -10,6 +10,7 @@ import time
 import tracemalloc
 
 import flask
+from codecarbon import OfflineEmissionsTracker
 
 from flask_sustainable.base import BaseIndicator
 
@@ -97,4 +98,62 @@ class PerfRAM(BaseIndicator):
         perf_ram = (current + tracemalloc.get_tracemalloc_memory()) / 10**6
         tracemalloc.stop()
         response.headers.update({self.name: f"{perf_ram:.5f}"})
+        return response
+
+
+class PerfEnergy(BaseIndicator):
+    """Indicator that measure the energy usage of the request.
+
+    When the request is done, the response will contain a header named
+    "Perf-Energy" with the energy usage of the request in watt-seconds.
+    """
+
+    name = "Perf-Energy"
+
+    def before_request(self) -> None:
+        if not flask.g.get("tracker"):
+            flask.g.tracker = OfflineEmissionsTracker(
+                country_iso_code="FRA",
+                measure_power_secs=3,
+                log_level=flask.current_app.logger.level,
+                save_to_file=False,
+            )
+        flask.g.tracker.start()
+
+    def after_request(self, response: flask.Response) -> flask.Response:
+        flask.g.tracker.stop()
+        # pylint: disable=w0212
+        perf_energy_ws = flask.g.tracker._total_energy.kWh * 3.6e6
+        response.headers.update({self.name: f"{perf_energy_ws:.5f}"})
+        return response
+
+
+class PerfPower(BaseIndicator):
+    """Indicator that measure the power usage of the request.
+
+    When the request is done, the response will contain a header named
+    "Perf-Power" with the power usage of the request in watt.
+    """
+
+    name = "Perf-Power"
+
+    def before_request(self) -> None:
+        if not flask.g.get("tracker"):
+            flask.g.tracker = OfflineEmissionsTracker(
+                country_iso_code="FRA",
+                measure_power_secs=3,
+                log_level=flask.current_app.logger.level,
+                save_to_file=False,
+            )
+        flask.g.tracker.start()
+
+    def after_request(self, response: flask.Response) -> flask.Response:
+        flask.g.tracker.stop()
+        # pylint: disable=w0212
+        perf_power = (
+            flask.g.tracker._cpu_power.W
+            + flask.g.tracker._gpu_power.W
+            + flask.g.tracker._ram_power.W
+        )
+        response.headers.update({self.name: f"{perf_power:.5f}"})
         return response

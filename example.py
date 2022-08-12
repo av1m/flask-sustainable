@@ -8,7 +8,14 @@ It is a simple Flask application that uses the Flask-Sustainable package.
 import flask
 
 from flask_sustainable import Sustainable
-from flask_sustainable.indicator import PerfCPU, PerfRAM, PerfTime
+from flask_sustainable.indicator import (
+    PerfCPU,
+    PerfEnergy,
+    PerfPower,
+    PerfRAM,
+    PerfTime,
+)
+from flask_sustainable.score import PerfScoreCO2
 
 
 def create_app() -> flask.Flask:
@@ -20,9 +27,16 @@ def create_app() -> flask.Flask:
     """
     app = flask.Flask(__name__)
     sustainable = Sustainable(app)
-    sustainable.add_indicator(PerfTime())
-    sustainable.add_indicator(PerfCPU())
-    sustainable.add_indicator(PerfRAM())
+    sustainable.add_indicators(
+        PerfTime(),
+        PerfCPU(),
+        PerfRAM(),
+        PerfEnergy(),
+        PerfPower(),
+    )
+    sustainable.add_scores(
+        PerfScoreCO2(),
+    )
 
     @app.route("/")
     def _():
