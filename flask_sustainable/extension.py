@@ -148,7 +148,7 @@ class Sustainable:
         assert isinstance(score, BaseScore), "Score must be a subclass of BaseScore"
         # Check if the name is valid
         try:
-            assert score.name.lower().split("perf-score")[1].isnumeric()
+            assert score.name.lower().split("perf-score-")[1].isnumeric()
         except ValueError as error:
             raise ValueError(
                 "Score name must start with 'Perf-score' and end with a number, "

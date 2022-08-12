@@ -37,7 +37,7 @@ class PerfTime(BaseIndicator):
 
     def after_request(self, response: flask.Response) -> flask.Response:
         perf_time = (time.perf_counter() - flask.g.perf_time) * 1000
-        response.headers.update({"Perf-Time": f"{perf_time:.5f}"})
+        response.headers.update({self.name: f"{perf_time:.5f}"})
         return response
 
 
@@ -67,7 +67,7 @@ class PerfCPU(BaseIndicator):
 
     def after_request(self, response: flask.Response) -> flask.Response:
         perf_cpu = (time.process_time() - flask.g.perf_cpu) * 1000
-        response.headers.update({"Perf-CPU": f"{perf_cpu:.5f}"})
+        response.headers.update({self.name: f"{perf_cpu:.5f}"})
         return response
 
 
@@ -96,5 +96,5 @@ class PerfRAM(BaseIndicator):
         current, _ = tracemalloc.get_traced_memory()
         perf_ram = (current + tracemalloc.get_tracemalloc_memory()) / 10**6
         tracemalloc.stop()
-        response.headers.update({"Perf-RAM": f"{perf_ram:.5f}"})
+        response.headers.update({self.name: f"{perf_ram:.5f}"})
         return response
