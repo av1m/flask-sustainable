@@ -35,7 +35,8 @@ class PerfScoreCO2(BaseScore):
 
     def after_request(self, response: flask.Response) -> flask.Response:
         try:
-            if final_emissions := flask.g.tracker.final_emissions:
+            final_emissions = flask.g.tracker.final_emissions
+            if final_emissions:
                 response.headers.update({self.name: f"{final_emissions:.16f}"})
         except AttributeError:
             logging.warning("No tracker found in flask.g")
