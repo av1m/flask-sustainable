@@ -15,7 +15,7 @@ import logging
 
 import flask
 
-from flask_sustainable.base import BaseIndicator, BaseScore
+from flask_sustainable.base import BaseHeader, BaseIndicator, BaseScore
 from flask_sustainable.compress import Compression
 
 logger = logging.getLogger(__name__)
@@ -90,14 +90,19 @@ class Sustainable:
         except TypeError as error:
             logger.warning("Error while compressing the response")
             logger.exception(error)
+        # Retrieve all registered headers
+        registered: list[BaseHeader] = [
+            *self._registered_indicators,
+            *self._registered_scores,
+        ]
         # Add allowed headers
         if flask.request.method == "OPTIONS":
-            headers = [x.name for x in self._registered_indicators]
+            headers = [x.name for x in registered]
             response.headers.extend(
                 {"Access-Control-Allow-Headers": ", ".join(headers)}
             )
         # Run after_request on all registered headers
-        for header in [*self._registered_indicators, *self._registered_scores]:
+        for header in registered:
             if header.should_use():
                 header.after_request(response=response)
         return response
